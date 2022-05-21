@@ -19,6 +19,24 @@ Vector2 Enemy::getScreenPos()
 
 void Enemy::tick(float deltaTime)
 {
-    velocity = Vector2Subtract(target->getScreenPos(), getScreenPos());
+    // check if player alive
+    if (!getAlive())
+        return;
+    velocity = Vector2Subtract(target->getCenterPos(), getCenterPos());
+    if (Vector2Length(velocity) < radius || Vector2Length(velocity) > detect_radius) velocity = {};
     BaseCharacter::tick(deltaTime);
+
+    // check for damaging the player
+    if (CheckCollisionRecs(getCollisionRec(), target->getCollisionRec()))
+    {
+        target->takeDamage(damagePerSec * deltaTime);
+    }
+
+    DrawCircleLines(getCenterPos().x, getCenterPos().y, detect_radius, RED);
+}
+
+void Enemy::reset()
+{
+    worldPos = {0.f, 0.f};
+    setAlive(true);
 }

@@ -3,6 +3,7 @@
 #include "Character.h"
 #include "Enemy.h"
 #include "Prop.h"
+#include <string>
 
 int main()
 {
@@ -14,17 +15,33 @@ int main()
     Vector2 mapPos{0.0, 0.0};
     const float mapScale{4.f};
 
-    Character knight{
-        windowSize[0],
-        windowSize[1],
-        LoadTexture("textures/Knight/knight_idle_spritesheet.png"),
-        LoadTexture("textures/Knight/knight_run_spritesheet.png")};
+    Texture2D knight_idle = LoadTexture("textures/Knight/knight_idle_spritesheet.png");
+    Texture2D knight_run = LoadTexture("textures/Knight/knight_run_spritesheet.png");
+    Texture2D goblin_idle = LoadTexture("textures/Enemy/goblin_idle_spritesheet.png");
+    Texture2D goblin_run = LoadTexture("textures/Enemy/goblin_run_spritesheet.png");
+    Texture2D slime_idle = LoadTexture("textures/Enemy/slime_idle_spritesheet.png");
+    Texture2D slime_run = LoadTexture("textures/Enemy/slime_run_spritesheet.png");
 
-    Enemy goblin{
-        Vector2{50.f, 50.f},
-        LoadTexture("textures/Enemy/goblin_idle_spritesheet.png"),
-        LoadTexture("textures/Enemy/goblin_run_spritesheet.png")};
-    goblin.setTarget(&knight);
+    Character knight{windowSize[0], windowSize[1], knight_idle, knight_run};
+
+    Enemy slime_01{Vector2{(32 * 25), (32 * 10)}, slime_idle, slime_run};
+    Enemy slime_02{Vector2{(32 * 30), (32 * 28)}, slime_idle, slime_run};
+    Enemy goblin_01{Vector2{(32 * 20), (32 * 15)}, goblin_idle, goblin_run};
+    Enemy goblin_02{Vector2{(32 * 25), (32 * 20)}, goblin_idle, goblin_run};
+    Enemy goblin_03{Vector2{(32 * 35), (32 * 25)}, goblin_idle, goblin_run};
+
+    Enemy *enemies[]{
+        &slime_01,
+        &slime_02,
+        &goblin_01,
+        &goblin_02,
+        &goblin_03};
+
+    // setting target
+    for (Enemy *enemy : enemies)
+    {
+        enemy->setTarget(&knight);
+    }
 
     Prop props[2]{
         Prop{Vector2{600.f, 300.f}, LoadTexture("textures/Props/rock.png")},
@@ -58,8 +75,21 @@ int main()
             knight.undoMovement();
         }
 
+        if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON))
+        {
+            for (Enemy *enemy : enemies)
+            {
+                if (CheckCollisionRecs(
+                        enemy->getCollisionRec(),
+                        knight.getWeaponCollisionRec()))
+                {
+                    enemy->setAlive(false);
+                }
+            }
+        }
+
         // Debug
-        // DrawRectangle(knight.getCollisionRec().x, knight.getCollisionRec().y, knight.getCollisionRec().width, knight.getCollisionRec().height, RED);
+        // DrawRectangleLines(knight.getCollisionRec().x, knight.getCollisionRec().y, knight.getCollisionRec().width, knight.getCollisionRec().height, RED);
 
         for (Prop prop : props)
         {
@@ -69,18 +99,41 @@ int main()
             }
         }
 
+        // update HUD
+        if (!knight.getAlive())
+        {
+            DrawText("Game Over!", 55.f, 45.f, 40, RED);
+            EndDrawing();
+            continue;
+        }
+        else
+        {
+            std::string knightHealth{"Health: "};
+            knightHealth.append(std::to_string(knight.getHealth()), 0, 5);
+            DrawText(
+                knightHealth.c_str(),
+                5.f, (windowSize[1] - 20), 20, BLACK);
+        }
+
         // draw enemy
-        goblin.tick(dt);
+        for (Enemy *enemy : enemies)
+        {
+            enemy->tick(dt);
+        }
 
         EndDrawing();
     }
+    UnloadTexture(map);
+    UnloadTexture(knight_idle);
+    UnloadTexture(knight_run);
+    UnloadTexture(goblin_idle);
+    UnloadTexture(goblin_run);
+    UnloadTexture(slime_idle);
+    UnloadTexture(slime_run);
     for (Prop prop : props)
     {
         prop.destroy();
     }
-    knight.destroy();
-    goblin.destroy();
-    UnloadTexture(map);
     CloseWindow();
     return 0;
 }

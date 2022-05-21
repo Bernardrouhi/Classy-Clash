@@ -3,7 +3,6 @@
 
 BaseCharacter::BaseCharacter()
 {
-
 }
 
 void BaseCharacter::undoMovement()
@@ -47,7 +46,11 @@ void BaseCharacter::tick(float deltaTime)
     Rectangle source{(frame * width), 0.f, (rightLeft * width), height};
     Rectangle dest{getScreenPos().x, getScreenPos().y, (scale * width), (scale * height)};
     DrawTexturePro(texture, source, dest, Vector2{}, 0.f, WHITE);
+}
 
+Vector2 BaseCharacter::getCenterPos()
+{
+    return Vector2Add(getScreenPos(), Vector2{static_cast<float>(width) * scale * .5f, static_cast<float>(height) * scale * .5f});
 }
 
 void BaseCharacter::destroy()

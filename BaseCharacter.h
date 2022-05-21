@@ -13,6 +13,9 @@ public:
     void destroy();
     virtual void tick(float deltaTime);
     virtual Vector2 getScreenPos() = 0;
+    Vector2 getCenterPos();
+    bool getAlive() { return alive; }
+    void setAlive(bool isAlive) { alive = isAlive; }
 
 protected:
     Texture2D texture{};
@@ -31,8 +34,10 @@ protected:
     float width{};
     float height{};
     float scale{4.0f};
-
     Vector2 velocity{};
+
+private:
+    bool alive{true};
 };
 
 #endif

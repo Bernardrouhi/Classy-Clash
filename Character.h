@@ -10,11 +10,16 @@ public:
     Character(int winWidth, int winHeight, Texture2D idle_texture, Texture2D run_texture);
     virtual Vector2 getScreenPos() override;
     virtual void tick(float deltaTime) override;
-
+    Rectangle getWeaponCollisionRec() { return weaponCollisionRec; }
+    float getHealth() const { return health; }
+    void takeDamage(float damage);
 
 private:
     int windowWidth{};
     int windowHeight{};
+    Texture2D weapon{LoadTexture("textures/Knight/weapon_sword.png")};
+    Rectangle weaponCollisionRec{};
+    float health{100.f};
 };
 
 #endif

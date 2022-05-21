@@ -9,8 +9,12 @@ public:
     virtual Vector2 getScreenPos() override;
     virtual void tick(float deltaTime) override;
     void setTarget(Character* character) { target = character; }
+    void reset();
 
 protected:
 private:
     Character* target{};
+    float damagePerSec{10.f};
+    float radius{25.f};
+    float detect_radius {175.f};
 };
