@@ -23,19 +23,28 @@ int main()
     Texture2D slime_run = LoadTexture("textures/Enemy/slime_run_spritesheet.png");
 
     Character knight{windowSize[0], windowSize[1], knight_idle, knight_run};
+    int numEnemies {GetRandomValue(5,50)};
+    Enemy *enemies[numEnemies];
+    bool regCharacter{};
+    for (int i = 0 ; i < numEnemies ; i++ )
+    {
+        if(regCharacter)
+        {
+            enemies[i] = new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, slime_idle, slime_run};
+        }
+        else
+        {
+            enemies[i] = new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, goblin_idle, goblin_run};
+        }
+        regCharacter = !regCharacter;
 
-    Enemy slime_01{Vector2{(32 * 25), (32 * 10)}, slime_idle, slime_run};
-    Enemy slime_02{Vector2{(32 * 30), (32 * 28)}, slime_idle, slime_run};
-    Enemy goblin_01{Vector2{(32 * 20), (32 * 15)}, goblin_idle, goblin_run};
-    Enemy goblin_02{Vector2{(32 * 25), (32 * 20)}, goblin_idle, goblin_run};
-    Enemy goblin_03{Vector2{(32 * 35), (32 * 25)}, goblin_idle, goblin_run};
-
-    Enemy *enemies[]{
-        &slime_01,
-        &slime_02,
-        &goblin_01,
-        &goblin_02,
-        &goblin_03};
+    }
+    // {
+    //     new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, slime_idle, slime_run},
+    //     new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, slime_idle, slime_run},
+    //     new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, goblin_idle, goblin_run},
+    //     new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, goblin_idle, goblin_run},
+    //     new Enemy{Vector2{static_cast<float>(32 * GetRandomValue(1,35)), static_cast<float>(32 * GetRandomValue(1,28))}, goblin_idle, goblin_run}};
 
     // setting target
     for (Enemy *enemy : enemies)
@@ -134,6 +143,7 @@ int main()
     {
         prop.destroy();
     }
+    delete [] enemies;
     CloseWindow();
     return 0;
 }
